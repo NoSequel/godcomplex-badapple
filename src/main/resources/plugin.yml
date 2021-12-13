@@ -1,0 +1,5 @@
+name: GodComplex-BadApple
+version: 1.0-SNAPSHOT
+main: io.github.nosequel.badapple.BadApplePlugin
+commands:
+  badapple:
