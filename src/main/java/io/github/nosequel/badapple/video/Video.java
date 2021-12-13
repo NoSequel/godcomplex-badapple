@@ -2,6 +2,7 @@ package io.github.nosequel.badapple.video;
 
 import io.github.nosequel.badapple.BadAppleConstants;
 import io.github.nosequel.badapple.BadApplePlugin;
+import io.github.nosequel.badapple.util.ColorUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -48,7 +49,7 @@ public class Video {
         // the video was split using ffmpeg, hopefully this is allowed! if not, I can recode this using the
         // before mentioned framebuffer method.
         for (File file : files) {
-            final Map<PixelLocation, Integer> pixels = new HashMap<>();
+            final Map<PixelLocation, Color> pixels = new HashMap<>();
 
             if (file.getName().endsWith(".png")) {
                 final BufferedImage bufferedImage = this.resizeImage(
@@ -59,7 +60,7 @@ public class Video {
                     for (int y = 0; y < bufferedImage.getHeight(); y++) {
                         pixels.put(
                                 new PixelLocation(x, y),
-                                bufferedImage.getRGB(x, y)
+                                new Color(bufferedImage.getRGB(x, y))
                         );
                     }
                 }
@@ -81,14 +82,16 @@ public class Video {
 
         this.thread = new Thread(() -> {
             for (Frame frame : this.frames) {
-                for (Map.Entry<PixelLocation, Integer> entry : frame.pixels().entrySet()) {
+                for (Map.Entry<PixelLocation, Color> entry : frame.pixels().entrySet()) {
                     final Sheep entity = sheep.get(entry.getKey());
-                    final int rgb = entry.getValue();
 
-                    final DyeColor color =
-                            rgb == -263173 || rgb == -1
-                                    ? DyeColor.WHITE
-                                    : DyeColor.BLACK;
+                    final DyeColor color = ColorUtil.getDyeColorByRgb(
+                            org.bukkit.Color.fromRGB(
+                                    entry.getValue().getRed(),
+                                    entry.getValue().getGreen(),
+                                    entry.getValue().getBlue()
+                            ).asRGB()
+                    );
 
                     Bukkit.getScheduler().runTask(
                             BadApplePlugin.getPlugin(BadApplePlugin.class),
@@ -116,7 +119,12 @@ public class Video {
         final Graphics2D graphics2D = resizedImage.createGraphics();
 
         graphics2D.drawImage(
-                originalImage, 0, 0, BadAppleConstants.VIDEO_WIDTH, BadAppleConstants.VIDEO_HEIGHT, null
+                originalImage,
+                0,
+                0,
+                BadAppleConstants.VIDEO_WIDTH,
+                BadAppleConstants.VIDEO_HEIGHT,
+                null
         );
 
         graphics2D.dispose();
