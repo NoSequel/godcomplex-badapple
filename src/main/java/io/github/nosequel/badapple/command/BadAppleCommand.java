@@ -1,7 +1,5 @@
 package io.github.nosequel.badapple.command;
 
-import io.github.nosequel.badapple.BadAppleConstants;
-import io.github.nosequel.badapple.video.PixelLocation;
 import io.github.nosequel.badapple.video.Video;
 import io.github.nosequel.badapple.video.playback.Playback;
 import lombok.RequiredArgsConstructor;
@@ -11,24 +9,25 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
-public class BadAppleCommand implements CommandExecutor {
+public record BadAppleCommand(
+        Video video,
+        Playback playback
+) implements CommandExecutor {
 
-    private final Video video;
-    private final Playback playback;
-
-    private boolean running;
+    // really wish I could just pass a pointer to a reference in memory into a method so I could just
+    // change this running value within the playFrames method, and have it declared in here. I simply do not need to check
+    // it anywhere else, but it's whatever I guess.
+    // private boolean running;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         final World world = Bukkit.getWorld("flat");
 
-        if (!this.running) {
+        if (!playback.isRunning()) {
             for (LivingEntity entity : world.getLivingEntities()) {
                 if (!(entity instanceof Player)) {
                     entity.remove();
@@ -36,7 +35,6 @@ public class BadAppleCommand implements CommandExecutor {
             }
 
             this.playback.playFrames(video);
-            this.running = true;
         }
 
         if (sender instanceof Player player) {

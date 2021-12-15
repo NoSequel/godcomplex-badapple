@@ -18,7 +18,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SheepPlayback implements Playback {
+public class SheepPlayback extends Playback {
     @Override
     public void playFrames(Video video) {
         final World world = Bukkit.getWorld("flat");
@@ -39,6 +39,8 @@ public class SheepPlayback implements Playback {
         }
 
         new Thread(() -> {
+            this.setRunning(true);
+
             for (Frame frame : video.getFrames()) {
                 for (Map.Entry<PixelLocation, Color> entry : frame.pixels().entrySet()) {
                     final Sheep entity = sheepMap.get(entry.getKey());
@@ -63,6 +65,8 @@ public class SheepPlayback implements Playback {
                     e.printStackTrace();
                 }
             }
+
+            this.setRunning(false);
         }).start();
     }
 }

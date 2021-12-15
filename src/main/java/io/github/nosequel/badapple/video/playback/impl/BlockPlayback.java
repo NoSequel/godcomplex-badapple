@@ -13,7 +13,7 @@ import org.bukkit.material.Wool;
 import java.awt.Color;
 import java.util.Map;
 
-public class BlockPlayback implements Playback {
+public class BlockPlayback extends Playback {
     @Override
     public void playFrames(Video video) {
         final World world = Bukkit.getWorld("flat");
@@ -29,6 +29,8 @@ public class BlockPlayback implements Playback {
         }
 
         new Thread(() -> {
+            this.setRunning(true);
+
             for (Frame frame : video.getFrames()) {
                 for (Map.Entry<PixelLocation, Color> entry : frame.pixels().entrySet()) {
                     final PixelLocation pixelLocation = entry.getKey();
@@ -63,6 +65,8 @@ public class BlockPlayback implements Playback {
                     e.printStackTrace();
                 }
             }
+
+            this.setRunning(false);
         }).start();
     }
 }
