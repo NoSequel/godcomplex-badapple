@@ -66,6 +66,10 @@ public class BlockPlayback extends Playback {
                 }
             }
 
+            // could probably reset blocks to what they previously were, but to be quite honest, I don't see a point in doing this and I'm rather lazy.
+            // if I ever want to do this: just store the previous blocks in something like a Map<Location, Material> or even a PixelLocation since I only really need
+            // the X/Y (using Y as Z as explained previously), n just loop through it to just reset them ig??? lol
+
             this.setRunning(false);
         }).start();
     }

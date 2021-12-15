@@ -66,6 +66,10 @@ public class SheepPlayback extends Playback {
                 }
             }
 
+            for (Map.Entry<PixelLocation, Sheep> entry : sheepMap.entrySet()) {
+                entry.getValue().remove(); // remove the sheep from existence. these sheep have caused me much pain.
+            }
+
             this.setRunning(false);
         }).start();
     }
