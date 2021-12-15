@@ -2,6 +2,7 @@ package io.github.nosequel.badapple;
 
 import io.github.nosequel.badapple.command.BadAppleCommand;
 import io.github.nosequel.badapple.video.Video;
+import io.github.nosequel.badapple.video.playback.impl.SheepPlayback;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
@@ -26,6 +27,6 @@ public class BadApplePlugin extends JavaPlugin {
 
         this
                 .getCommand("badapple")
-                .setExecutor(new BadAppleCommand(badApple));
+                .setExecutor(new BadAppleCommand(badApple, new SheepPlayback()));
     }
 }

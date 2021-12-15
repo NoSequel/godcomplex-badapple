@@ -3,6 +3,7 @@ package io.github.nosequel.badapple.command;
 import io.github.nosequel.badapple.BadAppleConstants;
 import io.github.nosequel.badapple.video.PixelLocation;
 import io.github.nosequel.badapple.video.Video;
+import io.github.nosequel.badapple.video.playback.Playback;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,11 +20,12 @@ import java.util.Map;
 public class BadAppleCommand implements CommandExecutor {
 
     private final Video video;
+    private final Playback playback;
+
     private boolean running;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        final Map<PixelLocation, Sheep> sheepMap = new HashMap<>();
         final World world = Bukkit.getWorld("flat");
 
         if (!this.running) {
@@ -33,21 +35,7 @@ public class BadAppleCommand implements CommandExecutor {
                 }
             }
 
-            for (int x = 0; x < BadAppleConstants.VIDEO_WIDTH; x++) {
-                for (int z = 0; z < BadAppleConstants.VIDEO_HEIGHT; z++) { // we're using Z instead of Y because we want to display it on the ground.
-                    final Location location = new Location(world, x, 4, z);
-                    final Sheep sheep = (Sheep) world.spawnEntity(location, EntityType.SHEEP);
-
-                    sheep.setAI(false);
-
-                    sheepMap.put(
-                            new PixelLocation(x, z),
-                            sheep
-                    );
-                }
-            }
-
-            video.displayOnSheep(sheepMap);
+            this.playback.playFrames(video);
             this.running = true;
         }
 

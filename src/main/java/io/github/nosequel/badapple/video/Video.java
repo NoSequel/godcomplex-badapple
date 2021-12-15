@@ -1,14 +1,9 @@
 package io.github.nosequel.badapple.video;
 
 import io.github.nosequel.badapple.BadAppleConstants;
-import io.github.nosequel.badapple.BadApplePlugin;
-import io.github.nosequel.badapple.util.ColorUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.entity.Sheep;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -71,43 +66,6 @@ public class Video {
         }
 
         this.frames = Collections.unmodifiableList(frames);
-    }
-
-    public void displayOnSheep(Map<PixelLocation, Sheep> sheep) {
-        if (sheep.size() != BadAppleConstants.VIDEO_WIDTH * BadAppleConstants.VIDEO_HEIGHT) {
-            throw new RuntimeException(
-                    "Amount of sheep does not match the video resolution (" + BadAppleConstants.VIDEO_WIDTH + "x" + BadAppleConstants.VIDEO_HEIGHT + ")"
-            );
-        }
-
-        this.thread = new Thread(() -> {
-            for (Frame frame : this.frames) {
-                for (Map.Entry<PixelLocation, Color> entry : frame.pixels().entrySet()) {
-                    final Sheep entity = sheep.get(entry.getKey());
-
-                    final DyeColor color = ColorUtil.getDyeColorByRgb(
-                            org.bukkit.Color.fromRGB(
-                                    entry.getValue().getRed(),
-                                    entry.getValue().getGreen(),
-                                    entry.getValue().getBlue()
-                            ).asRGB()
-                    );
-
-                    Bukkit.getScheduler().runTask(
-                            BadApplePlugin.getPlugin(BadApplePlugin.class),
-                            () -> entity.setColor(color)
-                    );
-                }
-
-                try {
-                    Thread.sleep(20L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        this.thread.start();
     }
 
     @SneakyThrows
